@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { Plus, Trash2, MessageSquare } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,6 @@ export default function Sidebar({
   onDeleteChat,
   currentChatId,
 }: SidebarProps) {
-  const { data: session } = useSession();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
 
   // Fetch chat sessions when component mounts

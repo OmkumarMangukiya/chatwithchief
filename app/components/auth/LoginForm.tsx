@@ -25,7 +25,7 @@ export default function LoginForm() {
         // Redirect to home page on successful sign in
         router.push('/');
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred');
     }
   };
@@ -89,7 +89,7 @@ export default function LoginForm() {
             href="/auth/register"
             className="text-sm text-indigo-600 hover:text-indigo-500"
           >
-            Don't have an account? Create one
+            Don&apos;t have an account? Create one
           </a>
         </div>
       </div>
