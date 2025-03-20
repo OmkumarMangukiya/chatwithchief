@@ -16,7 +16,7 @@ export async function GET(
     const chatSession = await prisma.chatSession.findFirst({
       where: {
         id: params.id,
-        userEmail: session.user.email,
+        userId: session.user.id,
       },
       include: {
         messages: {
