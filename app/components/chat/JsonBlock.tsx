@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { CheckIcon, ClipboardIcon } from '@heroicons/react/24/outline';
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
 interface JsonBlockProps {
-  data: any;
+  data: JsonValue;
 }
 
 export default function JsonBlock({ data }: JsonBlockProps) {

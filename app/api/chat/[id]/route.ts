@@ -40,7 +40,7 @@ export async function GET(
       messages: chatSession.messages,
     });
   } catch (error) {
-    console.error('Error fetching chat session:', error);
+    console.error('Error fetching chat session:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json(
       { error: 'Failed to fetch chat session' },
       { status: 500 }

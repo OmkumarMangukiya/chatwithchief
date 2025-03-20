@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { SunIcon, MoonIcon, Menu } from 'lucide-react';
 import CodeBlock from './CodeBlock';
@@ -16,15 +15,8 @@ interface Message {
   createdAt: Date;
 }
 
-interface ChatSession {
-  id: string;
-  title: string;
-  messages: Message[];
-}
-
 export default function ChatInterface() {
-  const { data: session } = useSession();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
