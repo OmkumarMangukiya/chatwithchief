@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import { SunIcon, MoonIcon, Menu } from 'lucide-react';
 import CodeBlock from './CodeBlock';
 import JsonBlock from './JsonBlock';
 import Sidebar from './Sidebar';
+import { Button } from '@/components/ui/button';
 
 interface Message {
   id: string;
@@ -29,7 +30,7 @@ export default function ChatInterface() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [systemMessage, setSystemMessage] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentChatId, setCurrentChatId] = useState<string | undefined>();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -159,29 +160,65 @@ export default function ChatInterface() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        onNewChat={handleNewChat}
-        onSelectChat={handleSelectChat}
-        onDeleteChat={handleDeleteChat}
-        currentChatId={currentChatId}
-      />
+    <div className="flex h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block">
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          onNewChat={handleNewChat}
+          onSelectChat={handleSelectChat}
+          onDeleteChat={handleDeleteChat}
+          currentChatId={currentChatId}
+        />
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div className="md:hidden">
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          onNewChat={handleNewChat}
+          onSelectChat={handleSelectChat}
+          onDeleteChat={handleDeleteChat}
+          currentChatId={currentChatId}
+        />
+      </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">ChatWithChief</h1>
-          <button
-            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-          >
-            {resolvedTheme === 'dark' ? (
-              <SunIcon className="h-5 w-5" />
-            ) : (
-              <MoonIcon className="h-5 w-5" />
-            )}
-          </button>
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="md:hidden"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-bold">ChatWithChief</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="hidden md:flex"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            >
+              {resolvedTheme === 'dark' ? (
+                <SunIcon className="h-5 w-5" />
+              ) : (
+                <MoonIcon className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -195,8 +232,8 @@ export default function ChatInterface() {
               <div
                 className={`max-w-[70%] rounded-lg p-3 ${
                   message.role === 'user'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
                 }`}
               >
                 {renderMessage(message)}
@@ -208,7 +245,7 @@ export default function ChatInterface() {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-gray-900 dark:text-white">
+              <div className="bg-muted rounded-lg p-3">
                 <div className="animate-pulse">Thinking...</div>
               </div>
             </div>
@@ -216,9 +253,9 @@ export default function ChatInterface() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 border-t dark:border-gray-700">
+        <div className="p-4 border-t">
           <div className="mb-4">
-            <label htmlFor="systemMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="systemMessage" className="block text-sm font-medium mb-1">
               System Message (Optional)
             </label>
             <textarea
@@ -226,7 +263,7 @@ export default function ChatInterface() {
               value={systemMessage}
               onChange={(e) => setSystemMessage(e.target.value)}
               placeholder="Enter system message to guide the AI's behavior..."
-              className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-ring"
               rows={2}
             />
           </div>
@@ -236,16 +273,15 @@ export default function ChatInterface() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 p-2 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-ring"
               disabled={isLoading}
             />
-            <button
+            <Button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
             >
               Send
-            </button>
+            </Button>
           </form>
         </div>
       </div>
